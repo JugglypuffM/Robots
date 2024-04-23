@@ -1,7 +1,7 @@
 package log;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Concurrent circular array implementation
  * Provides methods to add element, get current size, get sublist and get whole array as iterable
  */
-public class ConcurrentCircularArray {
+public class ConcurrentCircularArray implements Iterable<LogEntry> {
     private final LogEntry[] underlying;
     private final int capacity;
     private int size;
@@ -55,36 +55,54 @@ public class ConcurrentCircularArray {
     }
 
     /**
-     * Get sublist from whole array
+     * Get subarray iterator from whole array
      *
      * @param startFrom - inclusive start index
      * @param indexTo   - exclusive end index
-     * @return an array list of the specified range within this array
+     * @return an iterator of the specified range within this array
      */
-    public Iterable<LogEntry> subList(int startFrom, int indexTo) {
-        lock.lock();
-        try {
-            List<LogEntry> result = new ArrayList<>();
-            for (int i = startFrom; i < indexTo; i++) {
-                result.add(underlying[(head + i) % capacity]);
-            }
-            return result;
-        } finally {
-            lock.unlock();
-        }
+    public Iterator<LogEntry> subArrayIterator(int startFrom, int indexTo) {
+        return new CircularArrayIterator(startFrom, indexTo);
     }
 
-    /**
-     * Get whole array as iterable
-     *
-     * @return array list with all array elements
-     */
-    public Iterable<LogEntry> all() {
-        List<LogEntry> list = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            int shift = (head + i) % capacity;
-            list.add(underlying[shift]);
+    @Override
+    public Iterator<LogEntry> iterator() {
+        return new CircularArrayIterator(0, size);
+    }
+
+    private class CircularArrayIterator implements Iterator<LogEntry> {
+        private int current = 0;
+        private final int start;
+        private final int end;
+
+        public CircularArrayIterator(int start, int end) {
+            this.start = start;
+            this.end = end;
         }
-        return list;
+
+        @Override
+        public boolean hasNext() {
+            lock.lock();
+            try {
+                return current < end - start;
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        @Override
+        public LogEntry next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            lock.lock();
+            try {
+                int index = (head + start + current) % size;
+                current += 1;
+                return underlying[index];
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 }

@@ -65,10 +65,10 @@ public class LogWindowSource {
             return Collections.emptyList();
         }
         int indexTo = Math.min(startFrom + count, m_messages.size());
-        return m_messages.subList(startFrom, indexTo);
+        return () -> m_messages.subArrayIterator(startFrom, indexTo);
     }
 
     public Iterable<LogEntry> all() {
-        return m_messages.all();
+        return m_messages;
     }
 }
