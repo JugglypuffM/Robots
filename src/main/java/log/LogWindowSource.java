@@ -39,6 +39,13 @@ public class LogWindowSource {
         }
     }
 
+    public void unregisterAllListeners() {
+        synchronized (m_listeners) {
+            m_listeners.clear();
+            m_activeListeners = null;
+        }
+    }
+
     public void append(LogLevel logLevel, String strMessage) {
         LogEntry entry = new LogEntry(logLevel, strMessage);
         m_messages.add(entry);
