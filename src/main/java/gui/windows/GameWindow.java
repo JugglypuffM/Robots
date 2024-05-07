@@ -1,5 +1,8 @@
-package gui.game;
+package gui.windows;
 
+import gui.game.GameModel;
+import gui.game.GameVisualizer;
+import localization.Localizable;
 import log.Logger;
 import save.Memorizable;
 import save.StateManager;
@@ -7,8 +10,9 @@ import save.WindowInitException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ResourceBundle;
 
-public class GameWindow extends JInternalFrame implements Memorizable {
+public class GameWindow extends JInternalFrame implements Memorizable, Localizable {
     private final GameVisualizer m_visualizer;
 
     public GameWindow(StateManager stateManager, GameModel model) {
@@ -33,5 +37,10 @@ public class GameWindow extends JInternalFrame implements Memorizable {
     @Override
     public String getClassname() {
         return "gameWindow";
+    }
+
+    @Override
+    public void localeChange(ResourceBundle bundle) {
+        setTitle(bundle.getString(String.format("%s.title", getClassname())));
     }
 }

@@ -1,5 +1,6 @@
-package gui;
+package gui.windows;
 
+import localization.Localizable;
 import log.LogChangeListener;
 import log.LogEntry;
 import log.LogWindowSource;
@@ -10,8 +11,9 @@ import save.WindowInitException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ResourceBundle;
 
-public class LogWindow extends JInternalFrame implements LogChangeListener, Memorizable {
+public class LogWindow extends JInternalFrame implements LogChangeListener, Memorizable, Localizable {
     private LogWindowSource m_logSource;
     private TextArea m_logContent;
     private final StateManager stateManager;
@@ -61,5 +63,10 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Memo
     @Override
     public String getClassname() {
         return "logWindow";
+    }
+
+    @Override
+    public void localeChange(ResourceBundle bundle) {
+        setTitle(bundle.getString(String.format("%s.title", getClassname())));
     }
 }
