@@ -1,6 +1,7 @@
 package gui.windows;
 
 import gui.game.GameModel;
+import localization.LocaleManager;
 import localization.Localizable;
 import log.Logger;
 import save.Memorizable;
@@ -20,7 +21,7 @@ public class CoordinateWindow extends JInternalFrame implements PropertyChangeLi
     private final TextArea text = new TextArea();
 
     public CoordinateWindow(StateManager stateManager, GameModel model) {
-        super("Координаты", true, true, true, true);
+        super("", true, true, true, true);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(text, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -36,6 +37,7 @@ public class CoordinateWindow extends JInternalFrame implements PropertyChangeLi
             );
         }
         model.addNewListener(this);
+        localeChange(LocaleManager.getBundle());
     }
 
     @Override

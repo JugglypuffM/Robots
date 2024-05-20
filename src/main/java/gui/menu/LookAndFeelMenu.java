@@ -1,5 +1,7 @@
 package gui.menu;
 
+import gui.MainApplicationFrame;
+import localization.LocaleManager;
 import localization.Localizable;
 
 import javax.swing.*;
@@ -13,21 +15,21 @@ public class LookAndFeelMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "lookAndFeelMenu";
 
     public LookAndFeelMenu() {
-        super("Режим отображения");
+        super("");
         setMnemonic(KeyEvent.VK_V);
-        getAccessibleContext().setAccessibleDescription("Управление режимом отображения приложения");
-        JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
+        JMenuItem systemLookAndFeel = new JMenuItem("", KeyEvent.VK_S);
         systemLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             this.invalidate();
         });
         add(systemLookAndFeel);
-        JMenuItem crossPlatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
+        JMenuItem crossPlatformLookAndFeel = new JMenuItem("", KeyEvent.VK_S);
         crossPlatformLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             this.invalidate();
         });
         add(crossPlatformLookAndFeel);
+        localeChange(LocaleManager.getBundle());
     }
 
     private void setLookAndFeel(String className) {

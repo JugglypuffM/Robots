@@ -5,6 +5,7 @@ import gui.menu.MenuBar;
 import gui.windows.GameWindow;
 import gui.windows.CoordinateWindow;
 import gui.windows.LogWindow;
+import localization.LocaleManager;
 import localization.Localizable;
 import log.Logger;
 import save.Memorizable;
@@ -16,6 +17,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -28,7 +30,7 @@ import java.util.ResourceBundle;
 public class MainApplicationFrame extends JFrame implements Memorizable {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final StateManager stateManager = new StateManager();
-    public ResourceBundle bundle = ResourceBundle.getBundle("localization", new Locale("ru"));
+    private final LocaleManager localeManager = new LocaleManager(this);
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -78,28 +80,12 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
         frame.setVisible(true);
     }
 
-    public void changeLocale(Locale locale) {
-        try {
-            bundle = ResourceBundle.getBundle("localization", locale);
-            for (Component menuItem : getJMenuBar().getComponents())
-                if (menuItem instanceof Localizable item)
-                    item.localeChange(bundle);
-            for (Component component : desktopPane.getComponents())
-                if (component instanceof Localizable localizable)
-                    localizable.localeChange(bundle);
-                else if (component instanceof JInternalFrame.JDesktopIcon icon)
-                    if (icon.getInternalFrame() instanceof Localizable localizable)
-                        localizable.localeChange(bundle);
-        } catch (MissingResourceException e) {
-            Logger.error("Locale change failed due to missing resources with message:\n" + e.getMessage());
-        }
-    }
-
     /**
      * Exit operation handler
      * Asks user if he really wants to quit the application
      */
     private void exitOperation() {
+        ResourceBundle bundle = localeManager.getBundle();
         String[] options = {bundle.getString("exitDialog.yes"), bundle.getString("exitDialog.no")};
         int option = JOptionPane.showOptionDialog(this, bundle.getString("exitDialog.question"),
                 bundle.getString("exitDialog.title"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
@@ -116,6 +102,14 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
             Logger.getDefaultLogSource().unregisterAllListeners();
             setDefaultCloseOperation(EXIT_ON_CLOSE);
         }
+    }
+
+    public JDesktopPane getDesktopPane() {
+        return desktopPane;
+    }
+
+    public LocaleManager getLocaleManager() {
+        return localeManager;
     }
 
     @Override

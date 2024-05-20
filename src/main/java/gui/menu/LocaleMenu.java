@@ -1,6 +1,7 @@
 package gui.menu;
 
 import gui.MainApplicationFrame;
+import localization.LocaleManager;
 import localization.Localizable;
 
 import javax.swing.*;
@@ -14,16 +15,17 @@ import java.util.ResourceBundle;
 public class LocaleMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "localeMenu";
 
-    public LocaleMenu(MainApplicationFrame mainframe) {
-        super("Язык");
+    public LocaleMenu(LocaleManager localeManager) {
+        super("");
         setMnemonic(KeyEvent.VK_A);
-        JMenuItem russian = new JMenuItem("Русский");
-        russian.addActionListener((event) -> mainframe.changeLocale(new Locale("ru")));
+        JMenuItem russian = new JMenuItem("");
+        russian.addActionListener((event) -> localeManager.changeLocale(new Locale("ru")));
         add(russian);
 
-        JMenuItem english = new JMenuItem("Транслитерация");
-        english.addActionListener((event) -> mainframe.changeLocale(new Locale("en")));
+        JMenuItem english = new JMenuItem("");
+        english.addActionListener((event) -> localeManager.changeLocale(new Locale("en")));
         add(english);
+        localeChange(LocaleManager.getBundle());
     }
 
     @Override

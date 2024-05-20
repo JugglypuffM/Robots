@@ -1,6 +1,7 @@
 package gui.menu;
 
 import gui.MainApplicationFrame;
+import localization.LocaleManager;
 import localization.Localizable;
 import log.Logger;
 
@@ -17,15 +18,15 @@ public class AppMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "appMenu";
 
     public AppMenu(MainApplicationFrame mainframe) {
-        super("Приложение");
+        super("");
         setMnemonic(KeyEvent.VK_T);
-        getAccessibleContext().setAccessibleDescription("Команды приложению");
-        JMenuItem exitItem = new JMenuItem("Выход", KeyEvent.VK_S);
+        JMenuItem exitItem = new JMenuItem("", KeyEvent.VK_S);
         exitItem.addActionListener((event) -> {
             Logger.debug("exit trigger");
             mainframe.dispatchEvent(new WindowEvent(mainframe, WindowEvent.WINDOW_CLOSING));
         });
         add(exitItem);
+        localeChange(LocaleManager.getBundle());
     }
 
     @Override

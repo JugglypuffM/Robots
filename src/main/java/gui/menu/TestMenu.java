@@ -1,5 +1,7 @@
 package gui.menu;
 
+import gui.MainApplicationFrame;
+import localization.LocaleManager;
 import localization.Localizable;
 import log.Logger;
 
@@ -14,12 +16,12 @@ public class TestMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "testMenu";
 
     public TestMenu() {
-        super("Тесты");
+        super("");
         setMnemonic(KeyEvent.VK_T);
-        getAccessibleContext().setAccessibleDescription("Тестовые команды");
-        JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
+        JMenuItem addLogMessageItem = new JMenuItem("", KeyEvent.VK_S);
         addLogMessageItem.addActionListener((event) -> Logger.debug("Новая строка"));
         add(addLogMessageItem);
+        localeChange(LocaleManager.getBundle());
     }
 
     @Override

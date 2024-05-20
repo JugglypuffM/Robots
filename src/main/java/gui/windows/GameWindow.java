@@ -2,6 +2,7 @@ package gui.windows;
 
 import gui.game.GameModel;
 import gui.game.GameVisualizer;
+import localization.LocaleManager;
 import localization.Localizable;
 import log.Logger;
 import save.Memorizable;
@@ -16,7 +17,7 @@ public class GameWindow extends JInternalFrame implements Memorizable, Localizab
     private final GameVisualizer m_visualizer;
 
     public GameWindow(StateManager stateManager, GameModel model) {
-        super("Игровое поле", true, true, true, true);
+        super("", true, true, true, true);
         m_visualizer = new GameVisualizer(model);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
@@ -32,6 +33,7 @@ public class GameWindow extends JInternalFrame implements Memorizable, Localizab
                             "\nConfiguring by default"
             );
         }
+        localeChange(LocaleManager.getBundle());
     }
 
     @Override

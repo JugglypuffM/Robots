@@ -1,5 +1,6 @@
 package gui.windows;
 
+import localization.LocaleManager;
 import localization.Localizable;
 import log.LogChangeListener;
 import log.LogEntry;
@@ -19,7 +20,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Memo
     private final StateManager stateManager;
 
     public LogWindow(LogWindowSource logSource, StateManager stateManager) {
-        super("Протокол работы", true, true, true, true);
+        super("", true, true, true, true);
         m_logSource = logSource;
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
@@ -44,6 +45,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Memo
                             "\nConfiguring by default"
             );
         }
+        localeChange(LocaleManager.getBundle());
     }
 
     private void updateLogContent() {
