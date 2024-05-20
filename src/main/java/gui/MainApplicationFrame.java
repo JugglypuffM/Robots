@@ -88,7 +88,6 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
                         stateManager.saveFrame(memorizable.getClassname(), component);
             }
             stateManager.saveState();
-            Logger.getDefaultLogSource().unregisterAllListeners();
             setDefaultCloseOperation(EXIT_ON_CLOSE);
         }
     }
