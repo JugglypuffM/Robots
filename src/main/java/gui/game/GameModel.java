@@ -8,7 +8,7 @@ import java.beans.PropertyChangeSupport;
  * Robot movement class.
  * Calculates all robot movements and coordinates
  */
-public class GameModel {
+public class GameModel{
     private volatile double m_robotPositionX = 100;
     private volatile double m_robotPositionY = 100;
     private volatile double m_robotDirection = 0;
@@ -19,27 +19,18 @@ public class GameModel {
 
     private static final double maxVelocity = 0.1;
     private static final double maxAngularVelocity = 0.001;
-
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     public void addNewListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
     }
 
-    /**
-     * Update target position
-     *
-     * @param p - new position
-     */
     public void setTargetPosition(Point p) {
         support.firePropertyChange("targetPosition", new Point(m_targetPositionX, m_targetPositionY), p);
         m_targetPositionX = p.x;
         m_targetPositionY = p.y;
     }
 
-    /**
-     * Calculate next coordinates and change robot position
-     */
     public void updateRobot() {
         double distance = distance(m_targetPositionX, m_targetPositionY,
                 m_robotPositionX, m_robotPositionY);
@@ -153,7 +144,7 @@ public class GameModel {
     public int getTargetPositionX() {
         return m_targetPositionX;
     }
-
+    
     public int getTargetPositionY() {
         return m_targetPositionY;
     }

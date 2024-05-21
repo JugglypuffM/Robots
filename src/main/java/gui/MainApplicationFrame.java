@@ -1,12 +1,12 @@
 package gui;
 
 import gui.game.GameModel;
+import gui.game.GameVisualizer;
 import gui.menu.MenuBar;
 import gui.windows.GameWindow;
 import gui.windows.CoordinateWindow;
 import gui.windows.LogWindow;
 import localization.LocaleManager;
-import localization.Localizable;
 import log.Logger;
 import save.Memorizable;
 import save.StateManager;
@@ -14,12 +14,8 @@ import save.WindowInitException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -31,6 +27,8 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final StateManager stateManager = new StateManager();
     private final LocaleManager localeManager = new LocaleManager(this);
+    private GameModel gameModel;
+    private JPanel gameVisualizer;
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -52,17 +50,17 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
 
         setContentPane(desktopPane);
 
-        GameModel model = new GameModel();
+        gameModel = new GameModel();
+        gameVisualizer = new GameVisualizer(gameModel);
+        GameWindow gameWindow = new GameWindow(stateManager, gameVisualizer);
+        gameWindow.setSize(400, 400);
+        addWindow(gameWindow);
 
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), stateManager);
         addWindow(logWindow);
 
-        CoordinateWindow coordinateWindow = new CoordinateWindow(stateManager, model);
+        CoordinateWindow coordinateWindow = new CoordinateWindow(stateManager, gameModel);
         addWindow(coordinateWindow);
-
-        GameWindow gameWindow = new GameWindow(stateManager, model);
-        gameWindow.setSize(400, 400);
-        addWindow(gameWindow);
 
         setJMenuBar(new MenuBar(this));
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -110,6 +108,11 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
 
     public LocaleManager getLocaleManager() {
         return localeManager;
+    }
+
+    public void updateRobot(JPanel visualizer, GameModel model) {
+        gameVisualizer = visualizer;
+        gameModel = model;
     }
 
     @Override

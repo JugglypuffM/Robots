@@ -1,7 +1,5 @@
 package gui.windows;
 
-import gui.game.GameModel;
-import gui.game.GameVisualizer;
 import localization.LocaleManager;
 import localization.Localizable;
 import log.Logger;
@@ -14,11 +12,11 @@ import java.awt.*;
 import java.util.ResourceBundle;
 
 public class GameWindow extends JInternalFrame implements Memorizable, Localizable {
-    private final GameVisualizer m_visualizer;
+    private final JPanel m_visualizer;
 
-    public GameWindow(StateManager stateManager, GameModel model) {
+    public GameWindow(StateManager stateManager, JPanel visualizer) {
         super("", true, true, true, true);
-        m_visualizer = new GameVisualizer(model);
+        m_visualizer = visualizer;
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
