@@ -54,7 +54,13 @@ public class LogWindowSource {
             }
         }
         for (WeakReference<LogChangeListener> reference : activeListeners) {
-            Objects.requireNonNull(reference.get()).onLogChanged();
+            LogChangeListener listener = reference.get();
+            if (listener != null) {
+                listener.onLogChanged();
+            } else {
+                m_listeners.remove(reference);
+                m_activeListeners = null;
+            }
         }
     }
 
