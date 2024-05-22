@@ -1,75 +1,126 @@
 package gui.menu;
 
-import gui.JarLoader;
+import gui.JarClassLoader;
 import gui.MainApplicationFrame;
-import gui.game.GameModel;
 import gui.game.GameVisualizer;
+import gui.game.Painter;
 import localization.LocaleManager;
 import localization.Localizable;
 import log.Logger;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.ResourceBundle;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.lang.reflect.Method;
+import java.util.*;
 
+/**
+ * Robot visualisation change menu
+ */
 public class RobotLoadMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "robotLoadMenu";
-    private final JarLoader loader = new JarLoader();
+    private final GameVisualizer visualizer;
+    private final JarClassLoader loader = new JarClassLoader();
 
-    public RobotLoadMenu(MainApplicationFrame mainframe) {
+    public RobotLoadMenu(GameVisualizer visualizer) {
         super("");
         setMnemonic(KeyEvent.VK_T);
         JMenuItem addLogMessageItem = new JMenuItem("", KeyEvent.VK_S);
+        this.visualizer = visualizer;
         addLogMessageItem.addActionListener((event) -> {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fileChooser.setFileFilter(new FileNameExtensionFilter("JAR files", "jar"));
-            int result = fileChooser.showOpenDialog(null);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File file = fileChooser.getSelectedFile();
-                try{
-                    Class<?> modelClass = null;
-                    Class<?> visualizerClass = null;
-                    loader.loadClass(file, modelClass, visualizerClass);
-                    if(modelClass != null && visualizerClass != null){
-                        GameModel newModel =
-                                (GameModel) modelClass
-                                        .getDeclaredConstructor(GameModel.class).newInstance();
-                        GameVisualizer newVisualizer =
-                                (GameVisualizer) visualizerClass
-                                        .getDeclaredConstructor(GameVisualizer.class).newInstance(newModel);
-                        mainframe.updateRobot(newVisualizer, newModel);
-                        Logger.debug("New robot loaded");
-                    }
-                    else {
-                        Logger.error("Robot change failed due to absence of required classes: " +
-                                "make sure that your classes have 'model' and 'visualizer' in their names respectively");
-                    }
-                } catch (IOException | NoSuchMethodException | InstantiationException |
-                         IllegalAccessException | InvocationTargetException | NoClassDefFoundError e){
-                    Logger.error("Robot change failed due to invalid jar-file with message:\n"
-                            + e.getMessage()
-                            + "\n\n" + "Stacktrace:\n"
-                            + Arrays.toString(e.getStackTrace()));
-
-                }
+            File file = chooseFile();
+            if (file != null) {
+                tryToLoadAndUpdatePainter(file);
             }
         });
         add(addLogMessageItem);
         localeChange(LocaleManager.getBundle());
+    }
+
+    /**
+     * Choose file with explorer interface
+     * @return chosen file or null if nothing was chosen
+     */
+    private File chooseFile(){
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setFileFilter(new FileNameExtensionFilter("JAR files", "jar"));
+        int result = fileChooser.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            return fileChooser.getSelectedFile();
+        }
+        return null;
+    }
+
+    /**
+     * Try to load class, if not null try to create new implementation of {@link Painter} and update it in the visualizer
+     * @param file file with required class
+     */
+    private void tryToLoadAndUpdatePainter(File file){
+        try{
+            Class<?> painterClass = loader.loadClass(file, "painter");
+            if(painterClass != null){
+                Painter newPainter = createPainter(painterClass);
+                visualizer.changePainter(newPainter);
+                Logger.debug("New robot loaded");
+            }
+            else {
+                Logger.error("Robot change failed due to absence of painter class");
+            }
+        } catch (IOException | NoSuchMethodException | NoClassDefFoundError | InvocationTargetException |
+                 InstantiationException | IllegalAccessException e){
+            Logger.error("Robot change failed due to invalid jar-file with message:\n"
+                    + e.getMessage()
+                    + "\n\n" + "Stacktrace:\n"
+                    + Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Create implementation of {@link Painter} with methods from given class
+     * @param painterClass loaded class, which should contain required methods
+     * @return instance of implemented {@link Painter} interface
+     * @throws NoSuchMethodException if accessing to class methods failed
+     * @throws InvocationTargetException if {@link java.lang.reflect.Constructor#newInstance} failed
+     * @throws InstantiationException if {@link java.lang.reflect.Constructor#newInstance} failed
+     * @throws IllegalAccessException if {@link java.lang.reflect.Constructor#newInstance} failed
+     */
+    private Painter createPainter(Class<?> painterClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Object object = painterClass.getDeclaredConstructor().newInstance();
+        Method drawRobotMethod = painterClass.getMethod("drawRobot", Graphics2D.class, int.class, int.class, double.class);
+        Method drawTargetMethod = painterClass.getMethod("drawTarget", Graphics2D.class, int.class, int.class);
+        return new Painter() {
+            @Override
+            public void drawRobot(Graphics2D g, int robotCenterX, int robotCenterY, double direction) {
+                try {
+                    drawRobotMethod.invoke(object, g, robotCenterX, robotCenterY, direction);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    Logger.error("Robot paint failed due to exception with message:\n"
+                            + e.getMessage()
+                            + "\n\n" + "Stacktrace:\n"
+                            + Arrays.toString(e.getStackTrace()));
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void drawTarget(Graphics2D g, int x, int y) {
+                try {
+                    drawTargetMethod.invoke(object, g, x, y);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    Logger.error("Target paint failed due to exception with message:\n"
+                            + e.getMessage()
+                            + "\n\n" + "Stacktrace:\n"
+                            + Arrays.toString(e.getStackTrace()));
+                    e.printStackTrace();
+                }
+            }
+        };
     }
 
     @Override

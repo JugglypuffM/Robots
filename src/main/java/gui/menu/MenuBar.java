@@ -13,6 +13,6 @@ public class MenuBar extends JMenuBar {
         add(new TestMenu());
         add(new AppMenu(mainframe));
         add(new LocaleMenu(mainframe.getLocaleManager()));
-        add(new RobotLoadMenu(mainframe));
+        add(new RobotLoadMenu(mainframe.getGameVisualizer()));
     }
 }

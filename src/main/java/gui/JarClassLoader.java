@@ -8,7 +8,17 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class JarLoader extends ClassLoader {
+/**
+ * Class loader for jar files
+ */
+public class JarClassLoader extends ClassLoader {
+    /**
+     * Get bytes of jar entry
+     * @param jar jar-archive
+     * @param entry entry of this archive
+     * @return bytes of entry
+     * @throws IOException if the file reading failed
+     */
     private byte[] getBytes(JarFile jar, JarEntry entry) throws IOException {
         byte[] buffer = new byte[1000000];
         InputStream inputStream = jar.getInputStream(entry);
@@ -19,26 +29,29 @@ public class JarLoader extends ClassLoader {
         }
         return byteArrayOutputStream.toByteArray();
     }
-    public void loadClass(File file, Class<?> model, Class<?> visualizer) throws IOException {
+
+    /**
+     * Load class from given file
+     * @param file jar file
+     * @param name name of class that should be loaded
+     * @return some class
+     * @throws IOException if the file is not jar or {@link JarClassLoader#getBytes} fails
+     */
+    public Class<?> loadClass(File file, String name) throws IOException {
         try (JarFile jar = new JarFile(file)) {
             Enumeration<JarEntry> e = jar.entries();
             while (e.hasMoreElements()) {
                 JarEntry entry = e.nextElement();
                 if (entry.getName().endsWith(".class")) {
                     String className = entry.getName().replace(".class", "").replace("/", ".");
-                    if (className.toLowerCase().contains("game")) {
-                        if (className.toLowerCase().contains("model")) {
-                            byte[] bytes = getBytes(jar, entry);
-                            model = defineClass(className, bytes, 0, bytes.length);
-                        }
-                        if (className.toLowerCase().contains("visualizer")) {
-                            byte[] bytes = getBytes(jar, entry);
-                            visualizer = defineClass(className, bytes, 0, bytes.length);
-                        }
+                    if (className.toLowerCase().contains(name)) {
+                        byte[] bytes = getBytes(jar, entry);
+                        return defineClass(className, bytes, 0, bytes.length);
                     }
                 }
-            }
 
+            }
         }
+        return null;
     }
 }

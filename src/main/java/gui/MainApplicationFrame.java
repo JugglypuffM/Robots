@@ -2,6 +2,7 @@ package gui;
 
 import gui.game.GameModel;
 import gui.game.GameVisualizer;
+import gui.game.Painter;
 import gui.menu.MenuBar;
 import gui.windows.GameWindow;
 import gui.windows.CoordinateWindow;
@@ -27,8 +28,7 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final StateManager stateManager = new StateManager();
     private final LocaleManager localeManager = new LocaleManager(this);
-    private GameModel gameModel;
-    private JPanel gameVisualizer;
+    GameVisualizer gameVisualizer;
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -50,7 +50,7 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
 
         setContentPane(desktopPane);
 
-        gameModel = new GameModel();
+        GameModel gameModel = new GameModel();
         gameVisualizer = new GameVisualizer(gameModel);
         GameWindow gameWindow = new GameWindow(stateManager, gameVisualizer);
         gameWindow.setSize(400, 400);
@@ -110,9 +110,8 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
         return localeManager;
     }
 
-    public void updateRobot(JPanel visualizer, GameModel model) {
-        gameVisualizer = visualizer;
-        gameModel = model;
+    public GameVisualizer getGameVisualizer() {
+        return gameVisualizer;
     }
 
     @Override
