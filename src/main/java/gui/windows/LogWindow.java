@@ -12,6 +12,7 @@ import save.WindowInitException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class LogWindow extends JInternalFrame implements LogChangeListener, Memorizable, Localizable {
@@ -21,6 +22,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Memo
 
     public LogWindow(LogWindowSource logSource, StateManager stateManager) {
         super("", true, true, true, true);
+        setTitle(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.title", getClassname())));
         m_logSource = logSource;
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");
@@ -45,7 +47,6 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Memo
                             "\nConfiguring by default"
             );
         }
-        localeChange(LocaleManager.getBundle());
     }
 
     private void updateLogContent() {

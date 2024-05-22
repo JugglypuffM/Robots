@@ -8,6 +8,7 @@ import log.Logger;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 
@@ -19,14 +20,14 @@ public class AppMenu extends JMenu implements Localizable {
 
     public AppMenu(MainApplicationFrame mainframe) {
         super("");
+        setText(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.label", CLASSNAME)));
         setMnemonic(KeyEvent.VK_T);
-        JMenuItem exitItem = new JMenuItem("", KeyEvent.VK_S);
+        JMenuItem exitItem = new JMenuItem(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.exit", CLASSNAME)), KeyEvent.VK_S);
         exitItem.addActionListener((event) -> {
             Logger.debug("exit trigger");
             mainframe.dispatchEvent(new WindowEvent(mainframe, WindowEvent.WINDOW_CLOSING));
         });
         add(exitItem);
-        localeChange(LocaleManager.getBundle());
     }
 
     @Override

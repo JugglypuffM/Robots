@@ -7,6 +7,7 @@ import log.Logger;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -17,11 +18,11 @@ public class TestMenu extends JMenu implements Localizable {
 
     public TestMenu() {
         super("");
+        setText(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.label", CLASSNAME)));
         setMnemonic(KeyEvent.VK_T);
-        JMenuItem addLogMessageItem = new JMenuItem("", KeyEvent.VK_S);
+        JMenuItem addLogMessageItem = new JMenuItem(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.testMessage", CLASSNAME)), KeyEvent.VK_S);
         addLogMessageItem.addActionListener((event) -> Logger.debug("Новая строка"));
         add(addLogMessageItem);
-        localeChange(LocaleManager.getBundle());
     }
 
     @Override

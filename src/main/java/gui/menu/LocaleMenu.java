@@ -17,15 +17,15 @@ public class LocaleMenu extends JMenu implements Localizable {
 
     public LocaleMenu(LocaleManager localeManager) {
         super("");
+        setText(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.label", CLASSNAME)));
         setMnemonic(KeyEvent.VK_A);
-        JMenuItem russian = new JMenuItem("");
+        JMenuItem russian = new JMenuItem(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.russian", CLASSNAME)));
         russian.addActionListener((event) -> localeManager.changeLocale(new Locale("ru")));
         add(russian);
 
-        JMenuItem english = new JMenuItem("");
+        JMenuItem english = new JMenuItem(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.transliteration", CLASSNAME)));
         english.addActionListener((event) -> localeManager.changeLocale(new Locale("en")));
         add(english);
-        localeChange(LocaleManager.getBundle());
     }
 
     @Override

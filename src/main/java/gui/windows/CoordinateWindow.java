@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -22,6 +23,7 @@ public class CoordinateWindow extends JInternalFrame implements PropertyChangeLi
 
     public CoordinateWindow(StateManager stateManager, GameModel model) {
         super("", true, true, true, true);
+        setTitle(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.title", getClassname())));
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(text, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -37,7 +39,6 @@ public class CoordinateWindow extends JInternalFrame implements PropertyChangeLi
             );
         }
         model.addNewListener(this);
-        localeChange(LocaleManager.getBundle());
     }
 
     @Override

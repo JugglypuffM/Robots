@@ -85,10 +85,9 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
      * Asks user if he really wants to quit the application
      */
     private void exitOperation() {
-        ResourceBundle bundle = localeManager.getBundle();
-        String[] options = {bundle.getString("exitDialog.yes"), bundle.getString("exitDialog.no")};
-        int option = JOptionPane.showOptionDialog(this, bundle.getString("exitDialog.question"),
-                bundle.getString("exitDialog.title"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
+        String[] options = {ResourceBundle.getBundle("localization", localeManager.getCurrentLocale()).getString("exitDialog.yes"), ResourceBundle.getBundle("localization", localeManager.getCurrentLocale()).getString("exitDialog.no")};
+        int option = JOptionPane.showOptionDialog(this, ResourceBundle.getBundle("localization", localeManager.getCurrentLocale()).getString("exitDialog.question"),
+                ResourceBundle.getBundle("localization", localeManager.getCurrentLocale()).getString("exitDialog.title"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
                 null, options, null);
         if (option == JOptionPane.YES_OPTION) {
             for (Component component : desktopPane.getComponents()) {

@@ -6,6 +6,7 @@ import localization.Localizable;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -16,20 +17,20 @@ public class LookAndFeelMenu extends JMenu implements Localizable {
 
     public LookAndFeelMenu() {
         super("");
+        setText(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.label", CLASSNAME)));
         setMnemonic(KeyEvent.VK_V);
-        JMenuItem systemLookAndFeel = new JMenuItem("", KeyEvent.VK_S);
+        JMenuItem systemLookAndFeel = new JMenuItem(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.systemScheme", CLASSNAME)), KeyEvent.VK_S);
         systemLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             this.invalidate();
         });
         add(systemLookAndFeel);
-        JMenuItem crossPlatformLookAndFeel = new JMenuItem("", KeyEvent.VK_S);
+        JMenuItem crossPlatformLookAndFeel = new JMenuItem(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.universalScheme", CLASSNAME)), KeyEvent.VK_S);
         crossPlatformLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             this.invalidate();
         });
         add(crossPlatformLookAndFeel);
-        localeChange(LocaleManager.getBundle());
     }
 
     private void setLookAndFeel(String className) {

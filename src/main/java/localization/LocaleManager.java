@@ -13,11 +13,11 @@ import java.util.ResourceBundle;
 
 /**
  * Locale manager class
- * Has static method to get access to resource bundle
+ * Contains information about current locale
  */
 public class LocaleManager {
-    private static ResourceBundle bundle = ResourceBundle.getBundle("localization", Locale.getDefault());
     private final MainApplicationFrame mainframe;
+    private Locale currentLocale = Locale.getDefault();
 
     public LocaleManager(MainApplicationFrame mainframe) {
         this.mainframe = mainframe;
@@ -29,7 +29,8 @@ public class LocaleManager {
      */
     public void changeLocale(Locale locale) {
         try {
-            bundle = ResourceBundle.getBundle("localization", locale);
+            currentLocale = locale;
+            ResourceBundle bundle = ResourceBundle.getBundle("localization", locale);
             for (Component menuItem : mainframe.getJMenuBar().getComponents())
                 if (menuItem instanceof Localizable item)
                     item.localeChange(bundle);
@@ -45,7 +46,7 @@ public class LocaleManager {
         }
     }
 
-    public static ResourceBundle getBundle() {
-        return bundle;
+    public Locale getCurrentLocale() {
+        return currentLocale;
     }
 }
