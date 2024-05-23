@@ -20,14 +20,15 @@ public class JarClassLoader extends ClassLoader {
      * @throws IOException if the file reading failed
      */
     private byte[] getBytes(JarFile jar, JarEntry entry) throws IOException {
-        byte[] buffer = new byte[1000000];
-        InputStream inputStream = jar.getInputStream(entry);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        int read;
-        while ((read = inputStream.read(buffer)) != -1) {
-            byteArrayOutputStream.write(buffer, 0, read);
+        byte[] buffer = new byte[2048];
+        try (InputStream inputStream = jar.getInputStream(entry);
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, read);
+            }
+            return byteArrayOutputStream.toByteArray();
         }
-        return byteArrayOutputStream.toByteArray();
     }
 
     /**

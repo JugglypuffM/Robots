@@ -31,10 +31,10 @@ public class CoordinateWindow extends JInternalFrame implements PropertyChangeLi
         } catch (WindowInitException e) {
             setSize(200, 400);
             Logger.error(
-                    "Coordinate window initialization failed with message:\n" +
-                            e.getMessage() +
-                            "\nConfiguring by default"
+                    "Coordinate window initialization failed with message:\n" + e.getMessage(),
+                    e.getStackTrace()
             );
+            Logger.error("Configuring by default");
         }
         model.addNewListener(this);
         localeChange(LocaleManager.getBundle());

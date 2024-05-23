@@ -76,7 +76,7 @@ public class RobotLoadMenu extends JMenu implements Localizable {
             Logger.error("Robot change failed due to invalid jar-file with message:\n"
                     + e.getMessage()
                     + "\n\n" + "Stacktrace:\n"
-                    + Arrays.toString(e.getStackTrace()));
+                    + Arrays.toString(e.getStackTrace()).replace(",", ",\n"));
             e.printStackTrace();
         }
     }
@@ -100,10 +100,9 @@ public class RobotLoadMenu extends JMenu implements Localizable {
                 try {
                     drawRobotMethod.invoke(object, g, robotCenterX, robotCenterY, direction);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    Logger.error("Robot paint failed due to exception with message:\n"
-                            + e.getMessage()
-                            + "\n\n" + "Stacktrace:\n"
-                            + Arrays.toString(e.getStackTrace()));
+                    Logger.error(
+                            "Robot paint failed due to exception with message:\n" + e.getMessage(),
+                            e.getStackTrace());
                     e.printStackTrace();
                 }
             }
@@ -113,10 +112,9 @@ public class RobotLoadMenu extends JMenu implements Localizable {
                 try {
                     drawTargetMethod.invoke(object, g, x, y);
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    Logger.error("Target paint failed due to exception with message:\n"
-                            + e.getMessage()
-                            + "\n\n" + "Stacktrace:\n"
-                            + Arrays.toString(e.getStackTrace()));
+                    Logger.error(
+                            "Target paint failed due to exception with message:\n" + e.getMessage(),
+                            e.getStackTrace());
                     e.printStackTrace();
                 }
             }

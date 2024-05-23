@@ -17,6 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
@@ -28,7 +29,7 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final StateManager stateManager = new StateManager();
     private final LocaleManager localeManager = new LocaleManager(this);
-    GameVisualizer gameVisualizer;
+    private final GameVisualizer gameVisualizer;
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -41,11 +42,11 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
             setBounds(inset, inset,
                     screenSize.width - inset * 2,
                     screenSize.height - inset * 2);
-            Logger.debug(
-                    "Mainframe initialization failed with message:\n" +
-                            e.getMessage() +
-                            "\nConfiguring by default"
+            Logger.error(
+                    "Mainframe initialization failed with message:\n" + e.getMessage(),
+                    e.getStackTrace()
             );
+            Logger.debug("Configuring by default");
         }
 
         setContentPane(desktopPane);

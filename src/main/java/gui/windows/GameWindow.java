@@ -25,11 +25,11 @@ public class GameWindow extends JInternalFrame implements Memorizable, Localizab
             stateManager.configureFrame(getClassname(), this);
         } catch (WindowInitException e) {
             setSize(400, 400);
-            Logger.debug(
-                    "Game window initialization failed with message:\n" +
-                            e.getMessage() +
-                            "\nConfiguring by default"
+            Logger.error(
+                    "Game window initialization failed with message:\n" + e.getMessage(),
+                    e.getStackTrace()
             );
+            Logger.error("Configuring by default");
         }
         localeChange(LocaleManager.getBundle());
     }

@@ -39,11 +39,11 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Memo
             setSize(300, 800);
             setMinimumSize(getSize());
             pack();
-            Logger.debug(
-                    "Log window initialization failed with message:\n" +
-                            e.getMessage() +
-                            "\nConfiguring by default"
+            Logger.error(
+                    "Log window initialization failed with message:\n" + e.getMessage(),
+                    e.getStackTrace()
             );
+            Logger.error("Configuring by default");
         }
         localeChange(LocaleManager.getBundle());
     }
