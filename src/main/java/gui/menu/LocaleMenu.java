@@ -15,24 +15,25 @@ import java.util.ResourceBundle;
 public class LocaleMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "localeMenu";
 
-    public LocaleMenu(LocaleManager localeManager) {
-        super("");
-        setText(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.label", CLASSNAME)));
+    public LocaleMenu(JDesktopPane desktopPane, JMenuBar menuBar) {
+        super(LocaleManager.getString(CLASSNAME + ".label"));
         setMnemonic(KeyEvent.VK_A);
-        JMenuItem russian = new JMenuItem(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.russian", CLASSNAME)));
-        russian.addActionListener((event) -> localeManager.changeLocale(new Locale("ru")));
+        JMenuItem russian = new JMenuItem(LocaleManager.getString(CLASSNAME + ".russian"));
+        russian.addActionListener((event) ->
+                LocaleManager.getInstance().changeLocale(new Locale("ru"), menuBar, desktopPane));
         add(russian);
 
-        JMenuItem english = new JMenuItem(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.transliteration", CLASSNAME)));
-        english.addActionListener((event) -> localeManager.changeLocale(new Locale("en")));
+        JMenuItem english = new JMenuItem(LocaleManager.getString(CLASSNAME + ".transliteration"));
+        english.addActionListener((event) ->
+                LocaleManager.getInstance().changeLocale(new Locale("ru"), menuBar, desktopPane));
         add(english);
     }
 
     @Override
     public void localeChange(ResourceBundle bundle) {
-        setText(bundle.getString(String.format("%s.label", CLASSNAME)));
-        getItem(0).setText(bundle.getString(String.format("%s.russian", CLASSNAME)));
-        getItem(1).setText(bundle.getString(String.format("%s.transliteration", CLASSNAME)));
+        setText(bundle.getString(CLASSNAME + ".label"));
+        getItem(0).setText(bundle.getString(CLASSNAME + ".russian"));
+        getItem(1).setText(bundle.getString(CLASSNAME + ".transliteration"));
 
     }
 }

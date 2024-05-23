@@ -11,15 +11,14 @@ import save.WindowInitException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class GameWindow extends JInternalFrame implements Memorizable, Localizable {
+    private final static String CLASSNAME = "gameWindow";
     private final GameVisualizer m_visualizer;
 
     public GameWindow(StateManager stateManager, GameModel model) {
-        super("", true, true, true, true);
-        setTitle(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.title", getClassname())));
+        super(LocaleManager.getString(CLASSNAME + ".title"), true, true, true, true);
         m_visualizer = new GameVisualizer(model);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
@@ -39,11 +38,11 @@ public class GameWindow extends JInternalFrame implements Memorizable, Localizab
 
     @Override
     public String getClassname() {
-        return "gameWindow";
+        return CLASSNAME;
     }
 
     @Override
     public void localeChange(ResourceBundle bundle) {
-        setTitle(bundle.getString(String.format("%s.title", getClassname())));
+        setTitle(bundle.getString(CLASSNAME + ".title"));
     }
 }

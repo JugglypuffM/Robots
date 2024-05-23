@@ -6,7 +6,6 @@ import gui.windows.GameWindow;
 import gui.windows.CoordinateWindow;
 import gui.windows.LogWindow;
 import localization.LocaleManager;
-import localization.Localizable;
 import log.Logger;
 import save.Memorizable;
 import save.StateManager;
@@ -14,13 +13,8 @@ import save.WindowInitException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * Что требуется сделать:
@@ -30,7 +24,6 @@ import java.util.ResourceBundle;
 public class MainApplicationFrame extends JFrame implements Memorizable {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final StateManager stateManager = new StateManager();
-    private final LocaleManager localeManager = new LocaleManager(this);
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -51,6 +44,7 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
         }
 
         setContentPane(desktopPane);
+        setJMenuBar(new MenuBar(this));
 
         GameModel model = new GameModel();
 
@@ -64,7 +58,6 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
         gameWindow.setSize(400, 400);
         addWindow(gameWindow);
 
-        setJMenuBar(new MenuBar(this));
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         WindowAdapter listener = new WindowAdapter() {
             @Override
@@ -85,10 +78,20 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
      * Asks user if he really wants to quit the application
      */
     private void exitOperation() {
-        String[] options = {ResourceBundle.getBundle("localization", localeManager.getCurrentLocale()).getString("exitDialog.yes"), ResourceBundle.getBundle("localization", localeManager.getCurrentLocale()).getString("exitDialog.no")};
-        int option = JOptionPane.showOptionDialog(this, ResourceBundle.getBundle("localization", localeManager.getCurrentLocale()).getString("exitDialog.question"),
-                ResourceBundle.getBundle("localization", localeManager.getCurrentLocale()).getString("exitDialog.title"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-                null, options, null);
+        String[] options = {
+                LocaleManager.getString("exitDialog.yes"),
+                LocaleManager.getString("exitDialog.no")
+        };
+        int option = JOptionPane.showOptionDialog(
+                this,
+                LocaleManager.getString("exitDialog.question"),
+                LocaleManager.getString("exitDialog.title"),
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                null
+        );
         if (option == JOptionPane.YES_OPTION) {
             for (Component component : desktopPane.getComponents()) {
                 if (component instanceof Memorizable memorizable)
@@ -101,14 +104,6 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
             Logger.getDefaultLogSource().unregisterAllListeners();
             setDefaultCloseOperation(EXIT_ON_CLOSE);
         }
-    }
-
-    public JDesktopPane getDesktopPane() {
-        return desktopPane;
-    }
-
-    public LocaleManager getLocaleManager() {
-        return localeManager;
     }
 
     @Override

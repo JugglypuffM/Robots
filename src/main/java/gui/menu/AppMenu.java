@@ -8,7 +8,6 @@ import log.Logger;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 
@@ -19,10 +18,9 @@ public class AppMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "appMenu";
 
     public AppMenu(MainApplicationFrame mainframe) {
-        super("");
-        setText(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.label", CLASSNAME)));
+        super(LocaleManager.getString(CLASSNAME + ".label"));
         setMnemonic(KeyEvent.VK_T);
-        JMenuItem exitItem = new JMenuItem(ResourceBundle.getBundle("localization", Locale.getDefault()).getString(String.format("%s.exit", CLASSNAME)), KeyEvent.VK_S);
+        JMenuItem exitItem = new JMenuItem(LocaleManager.getString(CLASSNAME + ".exit"), KeyEvent.VK_S);
         exitItem.addActionListener((event) -> {
             Logger.debug("exit trigger");
             mainframe.dispatchEvent(new WindowEvent(mainframe, WindowEvent.WINDOW_CLOSING));
@@ -32,7 +30,7 @@ public class AppMenu extends JMenu implements Localizable {
 
     @Override
     public void localeChange(ResourceBundle bundle) {
-        setText(bundle.getString(String.format("%s.label", CLASSNAME)));
-        getItem(0).setText(bundle.getString(String.format("%s.exit", CLASSNAME)));
+        setText(bundle.getString(CLASSNAME + ".label"));
+        getItem(0).setText(bundle.getString(CLASSNAME + ".exit"));
     }
 }
