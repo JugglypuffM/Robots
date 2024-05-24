@@ -20,7 +20,8 @@ public class TestMenu extends JMenu implements Localizable {
         setMnemonic(KeyEvent.VK_T);
         JMenuItem addLogMessageItem =
                 new JMenuItem(LocaleManager.getString(CLASSNAME + ".testMessage"), KeyEvent.VK_S);
-        addLogMessageItem.addActionListener((event) -> Logger.debug("Новая строка"));
+        addLogMessageItem.addActionListener((event) ->
+                Logger.debug(LocaleManager.getString(CLASSNAME + ".testLog")));
         add(addLogMessageItem);
     }
 
@@ -28,5 +29,6 @@ public class TestMenu extends JMenu implements Localizable {
     public void localeChange(ResourceBundle bundle) {
         setText(bundle.getString(CLASSNAME + ".label"));
         getItem(0).setText(bundle.getString(CLASSNAME + ".testMessage"));
+        getItem(0).setText(bundle.getString(CLASSNAME + ".testLog"));
     }
 }

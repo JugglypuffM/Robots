@@ -3,8 +3,10 @@ package gui.menu;
 import gui.MainApplicationFrame;
 import localization.LocaleManager;
 import localization.Localizable;
+import log.Logger;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -15,18 +17,23 @@ import java.util.ResourceBundle;
 public class LocaleMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "localeMenu";
 
-    public LocaleMenu(JDesktopPane desktopPane, JMenuBar menuBar) {
+    public LocaleMenu(Container desktopContainer, JMenuBar menuBar) {
         super(LocaleManager.getString(CLASSNAME + ".label"));
         setMnemonic(KeyEvent.VK_A);
-        JMenuItem russian = new JMenuItem(LocaleManager.getString(CLASSNAME + ".russian"));
-        russian.addActionListener((event) ->
-                LocaleManager.getInstance().changeLocale(new Locale("ru"), menuBar, desktopPane));
-        add(russian);
+        try{
+            JDesktopPane desktopPane = (JDesktopPane) desktopContainer;
+            JMenuItem russian = new JMenuItem(LocaleManager.getString(CLASSNAME + ".russian"));
+            russian.addActionListener((event) ->
+                    LocaleManager.getInstance().changeLocale(new Locale("ru"), menuBar, desktopPane));
+            add(russian);
 
-        JMenuItem english = new JMenuItem(LocaleManager.getString(CLASSNAME + ".transliteration"));
-        english.addActionListener((event) ->
-                LocaleManager.getInstance().changeLocale(new Locale("ru"), menuBar, desktopPane));
-        add(english);
+            JMenuItem english = new JMenuItem(LocaleManager.getString(CLASSNAME + ".transliteration"));
+            english.addActionListener((event) ->
+                    LocaleManager.getInstance().changeLocale(new Locale("en"), menuBar, desktopPane));
+            add(english);
+        } catch (ClassCastException e) {
+            Logger.error("Failed to set up localization buttons with message: " + e.getMessage());
+        }
     }
 
     @Override
