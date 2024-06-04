@@ -18,20 +18,19 @@ public class AppMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "appMenu";
 
     public AppMenu(MainApplicationFrame mainframe) {
-        super("");
+        super(LocaleManager.getString(CLASSNAME + ".label"));
         setMnemonic(KeyEvent.VK_T);
-        JMenuItem exitItem = new JMenuItem("", KeyEvent.VK_S);
+        JMenuItem exitItem = new JMenuItem(LocaleManager.getString(CLASSNAME + ".exit"), KeyEvent.VK_S);
         exitItem.addActionListener((event) -> {
             Logger.debug("exit trigger");
             mainframe.dispatchEvent(new WindowEvent(mainframe, WindowEvent.WINDOW_CLOSING));
         });
         add(exitItem);
-        localeChange(LocaleManager.getBundle());
     }
 
     @Override
     public void localeChange(ResourceBundle bundle) {
-        setText(bundle.getString(String.format("%s.label", CLASSNAME)));
-        getItem(0).setText(bundle.getString(String.format("%s.exit", CLASSNAME)));
+        setText(bundle.getString(CLASSNAME + ".label"));
+        getItem(0).setText(bundle.getString(CLASSNAME + ".exit"));
     }
 }

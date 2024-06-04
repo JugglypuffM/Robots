@@ -50,6 +50,7 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
         }
 
         setContentPane(desktopPane);
+        setJMenuBar(new MenuBar(this));
 
         GameModel gameModel = new GameModel();
         gameVisualizer = new GameVisualizer(gameModel);
@@ -64,6 +65,10 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
         addWindow(coordinateWindow);
 
         setJMenuBar(new MenuBar(this));
+        GameWindow gameWindow = new GameWindow(stateManager, model);
+        gameWindow.setSize(400, 400);
+        addWindow(gameWindow);
+      
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         WindowAdapter listener = new WindowAdapter() {
             @Override
@@ -84,11 +89,20 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
      * Asks user if he really wants to quit the application
      */
     private void exitOperation() {
-        ResourceBundle bundle = localeManager.getBundle();
-        String[] options = {bundle.getString("exitDialog.yes"), bundle.getString("exitDialog.no")};
-        int option = JOptionPane.showOptionDialog(this, bundle.getString("exitDialog.question"),
-                bundle.getString("exitDialog.title"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-                null, options, null);
+        String[] options = {
+                LocaleManager.getString("exitDialog.yes"),
+                LocaleManager.getString("exitDialog.no")
+        };
+        int option = JOptionPane.showOptionDialog(
+                this,
+                LocaleManager.getString("exitDialog.question"),
+                LocaleManager.getString("exitDialog.title"),
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                null
+        );
         if (option == JOptionPane.YES_OPTION) {
             for (Component component : desktopPane.getComponents()) {
                 if (component instanceof Memorizable memorizable)
@@ -98,7 +112,6 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
                         stateManager.saveFrame(memorizable.getClassname(), component);
             }
             stateManager.saveState();
-            Logger.getDefaultLogSource().unregisterAllListeners();
             setDefaultCloseOperation(EXIT_ON_CLOSE);
         }
     }

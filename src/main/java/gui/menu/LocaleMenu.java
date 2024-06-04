@@ -3,8 +3,10 @@ package gui.menu;
 import gui.MainApplicationFrame;
 import localization.LocaleManager;
 import localization.Localizable;
+import log.Logger;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -15,24 +17,30 @@ import java.util.ResourceBundle;
 public class LocaleMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "localeMenu";
 
-    public LocaleMenu(LocaleManager localeManager) {
-        super("");
+    public LocaleMenu(Container desktopContainer, JMenuBar menuBar) {
+        super(LocaleManager.getString(CLASSNAME + ".label"));
         setMnemonic(KeyEvent.VK_A);
-        JMenuItem russian = new JMenuItem("");
-        russian.addActionListener((event) -> localeManager.changeLocale(new Locale("ru")));
-        add(russian);
+        try{
+            JDesktopPane desktopPane = (JDesktopPane) desktopContainer;
+            JMenuItem russian = new JMenuItem(LocaleManager.getString(CLASSNAME + ".russian"));
+            russian.addActionListener((event) ->
+                    LocaleManager.getInstance().changeLocale(new Locale("ru"), menuBar, desktopPane));
+            add(russian);
 
-        JMenuItem english = new JMenuItem("");
-        english.addActionListener((event) -> localeManager.changeLocale(new Locale("en")));
-        add(english);
-        localeChange(LocaleManager.getBundle());
+            JMenuItem english = new JMenuItem(LocaleManager.getString(CLASSNAME + ".transliteration"));
+            english.addActionListener((event) ->
+                    LocaleManager.getInstance().changeLocale(new Locale("en"), menuBar, desktopPane));
+            add(english);
+        } catch (ClassCastException e) {
+            Logger.error("Failed to set up localization buttons with message: " + e.getMessage());
+        }
     }
 
     @Override
     public void localeChange(ResourceBundle bundle) {
-        setText(bundle.getString(String.format("%s.label", CLASSNAME)));
-        getItem(0).setText(bundle.getString(String.format("%s.russian", CLASSNAME)));
-        getItem(1).setText(bundle.getString(String.format("%s.transliteration", CLASSNAME)));
+        setText(bundle.getString(CLASSNAME + ".label"));
+        getItem(0).setText(bundle.getString(CLASSNAME + ".russian"));
+        getItem(1).setText(bundle.getString(CLASSNAME + ".transliteration"));
 
     }
 }

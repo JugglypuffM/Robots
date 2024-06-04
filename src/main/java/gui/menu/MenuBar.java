@@ -3,6 +3,7 @@ package gui.menu;
 import gui.MainApplicationFrame;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Custom menu bar class

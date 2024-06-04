@@ -15,21 +15,22 @@ public class LookAndFeelMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "lookAndFeelMenu";
 
     public LookAndFeelMenu() {
-        super("");
+        super(LocaleManager.getString(CLASSNAME + ".label"));
         setMnemonic(KeyEvent.VK_V);
-        JMenuItem systemLookAndFeel = new JMenuItem("", KeyEvent.VK_S);
+        JMenuItem systemLookAndFeel =
+                new JMenuItem(LocaleManager.getString(CLASSNAME + ".systemScheme"), KeyEvent.VK_S);
         systemLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             this.invalidate();
         });
         add(systemLookAndFeel);
-        JMenuItem crossPlatformLookAndFeel = new JMenuItem("", KeyEvent.VK_S);
+        JMenuItem crossPlatformLookAndFeel =
+                new JMenuItem(LocaleManager.getString(CLASSNAME + ".universalScheme"), KeyEvent.VK_S);
         crossPlatformLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             this.invalidate();
         });
         add(crossPlatformLookAndFeel);
-        localeChange(LocaleManager.getBundle());
     }
 
     private void setLookAndFeel(String className) {
@@ -44,8 +45,8 @@ public class LookAndFeelMenu extends JMenu implements Localizable {
 
     @Override
     public void localeChange(ResourceBundle bundle) {
-        setText(bundle.getString(String.format("%s.label", CLASSNAME)));
-        getItem(0).setText(bundle.getString(String.format("%s.systemScheme", CLASSNAME)));
-        getItem(1).setText(bundle.getString(String.format("%s.universalScheme", CLASSNAME)));
+        setText(bundle.getString(CLASSNAME + ".label"));
+        getItem(0).setText(bundle.getString(CLASSNAME + ".systemScheme"));
+        getItem(1).setText(bundle.getString(CLASSNAME + ".universalScheme"));
     }
 }

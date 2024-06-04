@@ -12,11 +12,12 @@ import java.awt.*;
 import java.util.ResourceBundle;
 
 public class GameWindow extends JInternalFrame implements Memorizable, Localizable {
+    private final static String CLASSNAME = "gameWindow";
     private final JPanel m_visualizer;
 
     public GameWindow(StateManager stateManager, JPanel visualizer) {
-        super("", true, true, true, true);
-        m_visualizer = visualizer;
+        super(LocaleManager.getString(CLASSNAME + ".title"), true, true, true, true);
+        m_visualizer = visualizer);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -31,16 +32,15 @@ public class GameWindow extends JInternalFrame implements Memorizable, Localizab
             );
             Logger.error("Configuring by default");
         }
-        localeChange(LocaleManager.getBundle());
     }
 
     @Override
     public String getClassname() {
-        return "gameWindow";
+        return CLASSNAME;
     }
 
     @Override
     public void localeChange(ResourceBundle bundle) {
-        setTitle(bundle.getString(String.format("%s.title", getClassname())));
+        setTitle(bundle.getString(CLASSNAME + ".title"));
     }
 }

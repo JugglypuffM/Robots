@@ -16,17 +16,19 @@ public class TestMenu extends JMenu implements Localizable {
     private final static String CLASSNAME = "testMenu";
 
     public TestMenu() {
-        super("");
+        super(LocaleManager.getString(CLASSNAME + ".label"));
         setMnemonic(KeyEvent.VK_T);
-        JMenuItem addLogMessageItem = new JMenuItem("", KeyEvent.VK_S);
-        addLogMessageItem.addActionListener((event) -> Logger.debug("Новая строка"));
+        JMenuItem addLogMessageItem =
+                new JMenuItem(LocaleManager.getString(CLASSNAME + ".testMessage"), KeyEvent.VK_S);
+        addLogMessageItem.addActionListener((event) ->
+                Logger.debug(LocaleManager.getString(CLASSNAME + ".testLog")));
         add(addLogMessageItem);
-        localeChange(LocaleManager.getBundle());
     }
 
     @Override
     public void localeChange(ResourceBundle bundle) {
-        setText(bundle.getString(String.format("%s.label", CLASSNAME)));
-        getItem(0).setText(bundle.getString(String.format("%s.testMessage", CLASSNAME)));
+        setText(bundle.getString(CLASSNAME + ".label"));
+        getItem(0).setText(bundle.getString(CLASSNAME + ".testMessage"));
+        getItem(0).setText(bundle.getString(CLASSNAME + ".testLog"));
     }
 }
