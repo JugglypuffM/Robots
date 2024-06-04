@@ -1,6 +1,8 @@
-package gui;
+package gui.windows;
 
 import gui.game.GameModel;
+import localization.LocaleManager;
+import localization.Localizable;
 import log.Logger;
 import save.Memorizable;
 import save.StateManager;
@@ -10,15 +12,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ResourceBundle;
 
 /**
  * Window that displays robot coordinates
  */
-public class CoordinateWindow extends JInternalFrame implements PropertyChangeListener, Memorizable {
+public class CoordinateWindow extends JInternalFrame implements PropertyChangeListener, Memorizable, Localizable {
+    private final static String CLASSNAME = "coordinateWindow";
     private final TextArea text = new TextArea();
 
     public CoordinateWindow(StateManager stateManager, GameModel model) {
-        super("Координаты", true, true, true, true);
+        super(LocaleManager.getString(CLASSNAME + ".title"), true, true, true, true);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(text, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -49,6 +53,12 @@ public class CoordinateWindow extends JInternalFrame implements PropertyChangeLi
 
     @Override
     public String getClassname() {
-        return "coordinateWindow";
+        return CLASSNAME;
+    }
+
+
+    @Override
+    public void localeChange(ResourceBundle bundle) {
+        setTitle(bundle.getString(CLASSNAME + ".title"));
     }
 }

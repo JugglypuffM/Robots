@@ -1,7 +1,11 @@
 package gui;
 
 import gui.game.GameModel;
-import gui.game.GameWindow;
+import gui.menu.MenuBar;
+import gui.windows.GameWindow;
+import gui.windows.CoordinateWindow;
+import gui.windows.LogWindow;
+import localization.LocaleManager;
 import log.Logger;
 import save.Memorizable;
 import save.StateManager;
@@ -9,7 +13,6 @@ import save.WindowInitException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -41,6 +44,7 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
         }
 
         setContentPane(desktopPane);
+        setJMenuBar(new MenuBar(this));
 
         GameModel model = new GameModel();
 
@@ -54,7 +58,6 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
         gameWindow.setSize(400, 400);
         addWindow(gameWindow);
 
-        setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         WindowAdapter listener = new WindowAdapter() {
             @Override
@@ -75,10 +78,20 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
      * Asks user if he really wants to quit the application
      */
     private void exitOperation() {
-        String[] options = {"Да", "Нет"};
-        int option = JOptionPane.showOptionDialog(this, "Вы действительно хотите выйти?",
-                "Выход", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-                null, options, null);
+        String[] options = {
+                LocaleManager.getString("exitDialog.yes"),
+                LocaleManager.getString("exitDialog.no")
+        };
+        int option = JOptionPane.showOptionDialog(
+                this,
+                LocaleManager.getString("exitDialog.question"),
+                LocaleManager.getString("exitDialog.title"),
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                null
+        );
         if (option == JOptionPane.YES_OPTION) {
             for (Component component : desktopPane.getComponents()) {
                 if (component instanceof Memorizable memorizable)
@@ -89,104 +102,6 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
             }
             stateManager.saveState();
             setDefaultCloseOperation(EXIT_ON_CLOSE);
-        }
-    }
-
-//    protected JMenuBar createMenuBar() {
-//        JMenuBar menuBar = new JMenuBar();
-// 
-//        //Set up the lone menu.
-//        JMenu menu = new JMenu("Document");
-//        menu.setMnemonic(KeyEvent.VK_D);
-//        menuBar.add(menu);
-// 
-//        //Set up the first menu item.
-//        JMenuItem menuItem = new JMenuItem("New");
-//        menuItem.setMnemonic(KeyEvent.VK_N);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_N, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("new");
-////        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        //Set up the second menu item.
-//        menuItem = new JMenuItem("Quit");
-//        menuItem.setMnemonic(KeyEvent.VK_Q);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("quit");
-////        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        return menuBar;
-//    }
-
-    private JMenuBar generateMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
-        lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-        lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
-                "Управление режимом отображения приложения");
-
-        {
-            JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
-            systemLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                this.invalidate();
-            });
-            lookAndFeelMenu.add(systemLookAndFeel);
-        }
-
-        {
-            JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
-            crossplatformLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                this.invalidate();
-            });
-            lookAndFeelMenu.add(crossplatformLookAndFeel);
-        }
-
-        JMenu testMenu = new JMenu("Тесты");
-        testMenu.setMnemonic(KeyEvent.VK_T);
-        testMenu.getAccessibleContext().setAccessibleDescription(
-                "Тестовые команды");
-
-        {
-            JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-            addLogMessageItem.addActionListener((event) -> {
-                Logger.debug("Новая строка");
-            });
-            testMenu.add(addLogMessageItem);
-        }
-
-        JMenu appMenu = new JMenu("Приложение");
-        appMenu.setMnemonic(KeyEvent.VK_T);
-        appMenu.getAccessibleContext().setAccessibleDescription(
-                "Команды приложению");
-
-        {
-            JMenuItem exitItem = new JMenuItem("Выход", KeyEvent.VK_S);
-            exitItem.addActionListener((event) -> {
-                Logger.debug("exit trigger");
-                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-            });
-            appMenu.add(exitItem);
-        }
-
-        menuBar.add(lookAndFeelMenu);
-        menuBar.add(testMenu);
-        menuBar.add(appMenu);
-        return menuBar;
-    }
-
-    private void setLookAndFeel(String className) {
-        try {
-            UIManager.setLookAndFeel(className);
-            SwingUtilities.updateComponentTreeUI(this);
-        } catch (ClassNotFoundException | InstantiationException
-                 | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            // just ignore
         }
     }
 
