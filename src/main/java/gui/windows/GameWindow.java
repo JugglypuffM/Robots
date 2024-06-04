@@ -1,7 +1,5 @@
 package gui.windows;
 
-import gui.game.GameModel;
-import gui.game.GameVisualizer;
 import localization.LocaleManager;
 import localization.Localizable;
 import log.Logger;
@@ -15,11 +13,11 @@ import java.util.ResourceBundle;
 
 public class GameWindow extends JInternalFrame implements Memorizable, Localizable {
     private final static String CLASSNAME = "gameWindow";
-    private final GameVisualizer m_visualizer;
+    private final JPanel m_visualizer;
 
-    public GameWindow(StateManager stateManager, GameModel model) {
+    public GameWindow(StateManager stateManager, JPanel visualizer) {
         super(LocaleManager.getString(CLASSNAME + ".title"), true, true, true, true);
-        m_visualizer = new GameVisualizer(model);
+        m_visualizer = visualizer);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
@@ -28,11 +26,11 @@ public class GameWindow extends JInternalFrame implements Memorizable, Localizab
             stateManager.configureFrame(getClassname(), this);
         } catch (WindowInitException e) {
             setSize(400, 400);
-            Logger.debug(
-                    "Game window initialization failed with message:\n" +
-                            e.getMessage() +
-                            "\nConfiguring by default"
+            Logger.error(
+                    "Game window initialization failed with message:\n" + e.getMessage(),
+                    e.getStackTrace()
             );
+            Logger.error("Configuring by default");
         }
     }
 

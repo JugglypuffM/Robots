@@ -1,6 +1,8 @@
 package gui;
 
 import gui.game.GameModel;
+import gui.game.GameVisualizer;
+import gui.game.Painter;
 import gui.menu.MenuBar;
 import gui.windows.GameWindow;
 import gui.windows.CoordinateWindow;
@@ -15,6 +17,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
+import java.util.ResourceBundle;
 
 /**
  * Что требуется сделать:
@@ -24,6 +28,8 @@ import java.awt.event.WindowEvent;
 public class MainApplicationFrame extends JFrame implements Memorizable {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final StateManager stateManager = new StateManager();
+    private final LocaleManager localeManager = new LocaleManager(this);
+    private final GameVisualizer gameVisualizer;
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -36,28 +42,33 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
             setBounds(inset, inset,
                     screenSize.width - inset * 2,
                     screenSize.height - inset * 2);
-            Logger.debug(
-                    "Mainframe initialization failed with message:\n" +
-                            e.getMessage() +
-                            "\nConfiguring by default"
+            Logger.error(
+                    "Mainframe initialization failed with message:\n" + e.getMessage(),
+                    e.getStackTrace()
             );
+            Logger.debug("Configuring by default");
         }
 
         setContentPane(desktopPane);
         setJMenuBar(new MenuBar(this));
 
-        GameModel model = new GameModel();
+        GameModel gameModel = new GameModel();
+        gameVisualizer = new GameVisualizer(gameModel);
+        GameWindow gameWindow = new GameWindow(stateManager, gameVisualizer);
+        gameWindow.setSize(400, 400);
+        addWindow(gameWindow);
 
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource(), stateManager);
         addWindow(logWindow);
 
-        CoordinateWindow coordinateWindow = new CoordinateWindow(stateManager, model);
+        CoordinateWindow coordinateWindow = new CoordinateWindow(stateManager, gameModel);
         addWindow(coordinateWindow);
 
+        setJMenuBar(new MenuBar(this));
         GameWindow gameWindow = new GameWindow(stateManager, model);
         gameWindow.setSize(400, 400);
         addWindow(gameWindow);
-
+      
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         WindowAdapter listener = new WindowAdapter() {
             @Override
@@ -103,6 +114,18 @@ public class MainApplicationFrame extends JFrame implements Memorizable {
             stateManager.saveState();
             setDefaultCloseOperation(EXIT_ON_CLOSE);
         }
+    }
+
+    public JDesktopPane getDesktopPane() {
+        return desktopPane;
+    }
+
+    public LocaleManager getLocaleManager() {
+        return localeManager;
+    }
+
+    public GameVisualizer getGameVisualizer() {
+        return gameVisualizer;
     }
 
     @Override
